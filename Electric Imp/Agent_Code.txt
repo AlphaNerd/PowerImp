@@ -1,0 +1,104 @@
+#require "Parse.class.nut:1.0.1"
+
+local impID = imp.configparams.deviceid;
+
+
+// Log the URLs we need
+server.log("Example command: " + http.agenturl() + "?switch");
+local reqCount = 0;
+local myResponse = [];
+local getURL = "https://api.parse.com/1/classes/Log/";
+local parseID = “######################################”;
+local parseKEY = "######################################";
+local getParseSettings = http.get(getURL,{"X-Parse-Application-Id": parseID,"X-Parse-REST-API-Key": parseKEY,"Content-Type": "application/json"});
+
+
+
+// Process URI Requests
+function requestHandler(request, response) {
+  try {
+    // check if the user URI input has a query parameter
+    if ("plug" in request.query) {
+        local myVar = request.query.plug;
+        response.header("Access-Control-Allow-Origin", "*");
+        myResponse.append(response); // put in queue
+        parsePost(myVar); /// post data to Parse.com server
+        device.send("plug", myVar);
+    }
+    if ("status" in request.query) {
+        local myVar2 = request.query.status;
+        response.header("Access-Control-Allow-Origin", "*");
+        myResponse.append(response); // put in queue
+        device.send("status",myVar2);
+    }
+    if ("all" in request.query) {
+        local myVar3 = request.query.all;
+        response.header("Access-Control-Allow-Origin", "*");
+        myResponse.append(response); // put in queue
+        device.send("all",myVar3);
+    }
+  } 
+  catch (ex) {
+    response.send(500, "Invalid Command Sent: " + ex);
+  }
+}
+
+
+// RESTful POST to Parse.com
+function parsePost(myVar){
+  local parse = http.post( 
+    "https://api.parse.com/1/classes/EventLog/",
+    {
+        "X-Parse-Application-Id": parseID,
+        "X-Parse-REST-API-Key": parseKEY,
+        "Content-Type": "application/json"
+    },
+    http.jsonencode({
+      "deviceID" : impID,
+      "deviceType" : "New Baby Imp",
+      "deviceMode" : "Button",
+      "deviceState" : "Pressed",
+      "deviceName": "Agent-"+impID,
+      "deviceMessage": "New baby born in "+myVar,
+      "deviceURL": http.agenturl()
+    }) 
+  ).sendasync(
+      // Log server response
+      function( response ) {
+        server.log( "Parse.com Saved: "+response.body );
+        // local pos = myResponse.len() -1;
+        // myResponse[pos].send(200,"Success");
+      } 
+  );
+}
+
+
+
+function deviceRes(res){
+  /// send client response
+  local pos = myResponse.len() -1;
+  myResponse[pos].send(200,res);
+}
+
+
+function processResponse(res){
+  server.log("Code: " + res.statuscode + ". Message: " + res.body)
+}
+
+
+// register the HTTP handler
+http.onrequest(requestHandler);
+
+// Device response
+device.on("deviceRes",deviceRes);
+
+
+// On Connect
+device.onconnect(function() {
+    server.log("Powerbar CONNECTED to agent.");
+    // postBirth("Moncton")
+});
+// On Disconnect
+device.ondisconnect(function() {
+    server.log("Powerbar DISCONNECTED from agent");
+});

@@ -1,0 +1,112 @@
+server.log("Device Started");
+
+
+function switchPlug(myVar){;
+    switch(myVar){
+      case "1":
+        local pin = hardware.pin1.read();
+        if(pin){
+          hardware.pin1.write(0);
+          agent.send("deviceRes",hardware.pin1.read());
+        }else{
+          hardware.pin1.write(1);
+          agent.send("deviceRes",hardware.pin1.read());
+        }
+        break;
+      case "2":
+        local pin = hardware.pin2.read();
+        if(pin){
+          hardware.pin2.write(0);
+          agent.send("deviceRes",0);
+        }else{
+          hardware.pin2.write(1);
+          agent.send("deviceRes",1);
+        }
+        break;
+      case "3":
+        local pin = hardware.pin5.read();
+        if(pin){
+          hardware.pin5.write(0);
+          agent.send("deviceRes",0);
+        }else{
+          hardware.pin5.write(1);
+          agent.send("deviceRes",1);
+        }
+        break;
+      case "4":
+        local pin = hardware.pin7.read();
+        if(pin){
+          hardware.pin7.write(0);
+          agent.send("deviceRes",0);
+        }else{
+          hardware.pin7.write(1);
+          agent.send("deviceRes",1);
+        }
+        break;
+      case "5":
+        local pin = hardware.pin8.read();
+        if(pin){
+          hardware.pin8.write(0);
+	   agent.send("deviceRes”,0);
+        }else{
+          hardware.pin8.write(1);
+	  agent.send("deviceRes",1);
+        }
+        break;
+      default: null
+    }
+    agent.send("deviceRes","Success");
+}
+
+function getStatus(arg){
+    server.log("Get Status of Plugs")
+    local plug1 = hardware.pin1.read();
+    local plug2 = hardware.pin2.read();
+    local plug3 = hardware.pin5.read();
+    local plug4 = hardware.pin7.read();
+    local plug5 = hardware.pin8.read();
+    local plug6 = plug4; // physically wired together on breadboard
+    local plug7 = plug5; // physically wired together on breadboard
+    local plug8 = 1; // always-on plug
+    local res = plug1+","+plug2+","+plug3+","+plug4+","+plug5+","+plug6+","+plug7+","+plug8;
+    server.log(res)
+    agent.send("deviceRes",res);
+}
+
+function allPlugs(state){
+    server.log("Switch all "+state)
+    if (state == "0"){
+      hardware.pin1.write(0);
+      hardware.pin2.write(0);
+      hardware.pin5.write(0);
+      hardware.pin7.write(0);
+      hardware.pin8.write(0);
+      agent.send("deviceRes","0"); 
+    }
+    if (state == "1"){
+      hardware.pin1.write(1);
+      hardware.pin2.write(1);
+      hardware.pin5.write(1);
+      hardware.pin7.write(1);
+      hardware.pin8.write(1);
+      agent.send("deviceRes","1"); 
+    }
+}
+
+
+// register a handlers
+agent.on("plug",switchPlug);
+
+// register a handlers
+agent.on("all",allPlugs);
+
+// register a handlers
+agent.on("status",getStatus);
+
+
+hardware.pin1.configure(DIGITAL_OUT,1); // relay 1
+hardware.pin2.configure(DIGITAL_OUT,1); // relay 2
+hardware.pin5.configure(DIGITAL_OUT,1); // relay 3
+hardware.pin7.configure(DIGITAL_OUT,1); // relay 4 & 6 are physically connected together
+hardware.pin8.configure(DIGITAL_OUT,1); // relay 5 & 7 are physically connected together
+// hardware.pin9.configure(DIGITAL_OUT,0); // imp pin burnt out. Replace board.

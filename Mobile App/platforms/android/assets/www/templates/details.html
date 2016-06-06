@@ -1,0 +1,46 @@
+<ion-view view-title="How To">
+    <ion-content>
+        <div class="list card">
+            <div class="item">
+                <h2>Summary</h2>
+                <p>In a nut shell, it works like this:</p>
+                <div class="item item-body">
+	                    <li>Mobile app button is clicked, and RESTful call is made to Electric Imp Agent (ie. http://agent.electricimp.com/RbNoShy8EqMC).</li>
+	                    <li>Agent receives http request and calls event handler, which then passes arguments to Device (the physical chip)</li>
+	                    <li>Device calls Event Handler to change IO pins from high to low (or vise versa depending on wiring setup)</li>
+	                    <li>Device sends agent a success or error message</li>
+	                    <li>Agent sends back response to mobile app</li>
+	                    <li>Mobile app adjusts angular model through '$powerbar' service</li>
+	                    <p>I don't have a diagram done yet, nor did I take a pic before closing it all up. I will do both of those soon and update the <a href="https://github.com/AlphaNerds/IoT-Powerbar">Git Repo</a>. For now you can reference the image below, as its basically the same idea, just for 2 relays instead of 8.</p>
+	                    <a href="https://community.electricimp.com/wp-content/uploads/2014/07/photo-1-15.jpg"><img class="full-image" src="https://community.electricimp.com/wp-content/uploads/2014/07/photo-1-15.jpg"></a>
+                </div>
+            </div>
+            <div class="list card">
+                <div class="item item-avatar">
+                    <img src="img/imp.png">
+                    <h2>Electric Imp</h2>
+                    <p><a href="https://electricimp.com/docs/">Developer Docs</a></p>
+                </div>
+                <div class="item item-body">
+                    <p>Electric Imp is a cloud based IoT platform/device that is really easy to use and setup. This is the link between your mobile app and your physical device. Their patented 'Blink Up' technology means you can have an Imp powered up and connected to the web in
+                        < 2mins.</p>
+                            <p>There are two code bases to maintain for Electric Imp, one for the device and one in their cloud. Coding them is super easy, very much like JS, and their IDE is really easy to use.</p>
+                            <img class="screenshot" src="img/imp-ide.png">
+                            <!-- <p>
+	      <a href="#" class="subdued">1 Like</a>
+	      <a href="#" class="subdued">5 Comments</a>
+	    </p> -->
+                </div>
+                <div class="item item-avatar">
+                    <img src="img/imp.png">
+                    <h2>Agent Code (Cloud Code)</h2>
+                    <p><a href="https://github.com/AlphaNerds/IoT-Powerbar/blob/master/Electric%20Imp/Agent_Code.txt">View</a></p>
+                </div>
+                <div class="item item-avatar">
+                    <img src="img/imp.png">
+                    <h2>Device Code</h2>
+                    <p><a href="https://github.com/AlphaNerds/IoT-Powerbar/blob/master/Electric%20Imp/Device_Code.txt">View</a></p>
+                </div>
+            </div>
+    </ion-content>
+</ion-view>
